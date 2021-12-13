@@ -3,6 +3,7 @@ package com.example.mvvm_recyclerview_livedata_viewmodel.adapter
 import android.content.Context
 import android.content.Intent
 import android.media.Image
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,17 +14,21 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.mvvm_recyclerview_livedata_viewmodel.New_Activity
 import com.example.mvvm_recyclerview_livedata_viewmodel.R
+import com.example.mvvm_recyclerview_livedata_viewmodel.database.SocialAppUser
 import com.example.mvvm_recyclerview_livedata_viewmodel.model.MovieModel
+import com.google.gson.Gson
 
-class MovieListAdapter(_context: Context,_movieList:List<MovieModel>):RecyclerView.Adapter<MovieListAdapter.viewHolder>() {
+class MovieListAdapter(_context: Context,_movieList:List<SocialAppUser>):RecyclerView.Adapter<MovieListAdapter.viewHolder>() {
 
-    private var movieList: List<MovieModel>? = _movieList
+    private var movieList: List<SocialAppUser>? = _movieList
     var context = _context
 
 
     class viewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView = itemView.findViewById<ImageView>(R.id.imageView)
-        val textView = itemView.findViewById<TextView>(R.id.textView)
+        val likesCnt = itemView.findViewById<TextView>(R.id.likesCnt)
+        val commentsCnt = itemView.findViewById<TextView>(R.id.commentsCnt)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
@@ -32,11 +37,13 @@ class MovieListAdapter(_context: Context,_movieList:List<MovieModel>):RecyclerVi
     }
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
-        holder.textView.text = movieList?.get(position)?.id.toString()
+        holder.likesCnt.text = movieList?.get(position)?.likes.toString()
+        holder.commentsCnt.text = movieList?.get(position)?.comments?.size.toString()
+
 
         Glide
             .with(context)
-            .load(movieList?.get(position)?.urls?.thumb)
+            .load(movieList?.get(position)?.imageUrl)
             .fitCenter()
             .circleCrop()
             .apply(RequestOptions().override(600, 550))
@@ -49,8 +56,11 @@ class MovieListAdapter(_context: Context,_movieList:List<MovieModel>):RecyclerVi
         holder.imageView.setOnClickListener{
             val intent = Intent(context,New_Activity::class.java)
             if (tempObj != null) {
-                intent.putExtra("IMAGE", tempObj.urls?.thumb)
-                intent.putExtra("ID",tempObj.id)
+                intent.putExtra("IMAGE", tempObj.imageUrl)
+                intent.putExtra("COMMENTS", Gson().toJson(tempObj.comments))
+                intent.putExtra("ID",tempObj.db_id)
+
+                Log.d("OBJECT","${tempObj.db_id}")
                 intent.flags=Intent.FLAG_ACTIVITY_NEW_TASK
                 context.startActivity(intent)
             }
@@ -62,7 +72,7 @@ class MovieListAdapter(_context: Context,_movieList:List<MovieModel>):RecyclerVi
         return movieList!!.size
     }
 
-    fun setMovieList(movieList: List<MovieModel>) {
+    fun setMovieList(movieList: List<SocialAppUser>) {
         this.movieList = movieList
         notifyDataSetChanged()
     }

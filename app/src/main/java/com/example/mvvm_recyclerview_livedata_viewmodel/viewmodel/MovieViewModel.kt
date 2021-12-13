@@ -1,18 +1,34 @@
 package com.example.mvvm_recyclerview_livedata_viewmodel.viewmodel
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.example.mvvm_recyclerview_livedata_viewmodel.SocialAppRepository
+import com.example.mvvm_recyclerview_livedata_viewmodel.database.SocialAppDatabase
+import com.example.mvvm_recyclerview_livedata_viewmodel.database.SocialAppUser
 import com.example.mvvm_recyclerview_livedata_viewmodel.model.MovieModel
 import com.example.mvvm_recyclerview_livedata_viewmodel.network.APIService
 import com.example.mvvm_recyclerview_livedata_viewmodel.network.RetroInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MovieViewModel : ViewModel(){
+class MovieViewModel(application: Application) : AndroidViewModel(application){
 
-    private val movieList:MutableLiveData<List<MovieModel>> = MutableLiveData()
+    val readAllData : LiveData<List<SocialAppUser>>
+    private val repository : SocialAppRepository
+
+    init{
+        val socialAppDao = SocialAppDatabase.getDatabase(application).userDao()
+        repository = SocialAppRepository(socialAppDao)
+        readAllData = repository.readAllData
+    }
+
+//    private val movieList:MutableLiveData<List<MovieModel>> = MutableLiveData()
+//        private val movieList =
+
 
     fun makeApiCall() {
         val apiService = RetroInstance.getRetroClient()?.create(APIService::class.java)
@@ -23,20 +39,46 @@ class MovieViewModel : ViewModel(){
                     call: Call<List<MovieModel>>,
                     response: Response<List<MovieModel>>
                 ) {
-                    Log.d("Dummy","${response.body()}")
-                    movieList.postValue(response.body())
+//                    Log.d("Dummy","${response.body()}")
+                    val finalList = mutableListOf<SocialAppUser>()
+                    val responses = response.body()
+                    val comments = mutableListOf<String>()
+                    // Remove this
+                    if (responses != null) {
+                        for(singleResponse in responses){
+                            val newUser = SocialAppUser(0,singleResponse.urls?.thumb,0,
+                                comments
+                            )
+                            viewModelScope.launch(Dispatchers.IO) {
+                                repository.addUser(newUser)
+                            }
+
+                        }
+                    }
+//                    movieList.postValue(finalList)
                 }
 
                 override fun onFailure(call: Call<List<MovieModel>>, t: Throwable) {
                     Log.d("Dummy","${t.message}")
-
-                    movieList.postValue(null)
+//                    movieList.postValue(mutableListOf<SocialAppUser>())
                 }
             })
     }
 
-    fun getMovieListObserver():MutableLiveData<List<MovieModel>>{
-        return movieList
+    fun getMovieListObserver():LiveData<List<SocialAppUser>>{
+        return readAllData
+    }
+
+    fun updateLikesCount(id:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateLikeCount(id)
+        }
+    }
+
+    fun updateComment(id:Int,comment:List<String>){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateComment(id,comment)
+        }
     }
 
 

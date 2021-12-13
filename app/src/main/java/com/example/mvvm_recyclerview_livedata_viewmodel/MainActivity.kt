@@ -11,13 +11,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mvvm_recyclerview_livedata_viewmodel.adapter.MovieListAdapter
+import com.example.mvvm_recyclerview_livedata_viewmodel.database.SocialAppUser
 import com.example.mvvm_recyclerview_livedata_viewmodel.model.MovieModel
 import com.example.mvvm_recyclerview_livedata_viewmodel.viewmodel.MovieViewModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var mAdapter:MovieListAdapter
-    var mMovieList:List<MovieModel> = mutableListOf()
+    var mMovieList:List<SocialAppUser> = mutableListOf()
     lateinit var mViewModel:MovieViewModel
+    var apiCalled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -40,7 +42,10 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.show).visibility = View.VISIBLE
             }
         })
-        mViewModel.makeApiCall()
+        if(apiCalled==false) {
+            mViewModel.makeApiCall()
+            apiCalled = true
+        }
 
 
     }
