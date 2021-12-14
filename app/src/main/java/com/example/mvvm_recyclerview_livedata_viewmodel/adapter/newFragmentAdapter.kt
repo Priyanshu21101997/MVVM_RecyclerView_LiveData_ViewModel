@@ -23,7 +23,10 @@ class newActivityAdapter(_movieList:List<SocialAppUser>): RecyclerView.Adapter<n
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.commentsSection.text = movieList?.get(position)?.db_id.toString()
+        if(movieList?.get(position)?.comments?.size!! > 0)
+            holder.commentsSection.text = movieList?.get(position)?.comments?.get(0)
+        else
+            holder.commentsSection.text = "No Comments Found"
     }
 
     override fun getItemCount(): Int {

@@ -3,6 +3,7 @@ package com.example.mvvm_recyclerview_livedata_viewmodel
 import android.graphics.Movie
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Adapter
 import android.widget.TextView
@@ -16,37 +17,37 @@ import com.example.mvvm_recyclerview_livedata_viewmodel.model.MovieModel
 import com.example.mvvm_recyclerview_livedata_viewmodel.viewmodel.MovieViewModel
 
 class MainActivity : AppCompatActivity() {
-    lateinit var mAdapter:MovieListAdapter
-    var mMovieList:List<SocialAppUser> = mutableListOf()
-    lateinit var mViewModel:MovieViewModel
-    var apiCalled = false
+//    lateinit var mAdapter:MovieListAdapter
+//    var mMovieList:List<SocialAppUser> = mutableListOf()
+//    lateinit var mViewModel:MovieViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportFragmentManager.beginTransaction().replace(R.id.layout,ListItemFragment()).commit()
 
-        val recyclerView =findViewById<RecyclerView>(R.id.recyclerView)
-        val layoutManager = GridLayoutManager(this,2)
-        recyclerView.layoutManager = layoutManager
-        mAdapter = MovieListAdapter(this,mMovieList)
-        recyclerView.adapter = mAdapter
 
-        mViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
-        mViewModel.getMovieListObserver().observe(this, Observer {
-            if(it!=null) {
-                mMovieList = it
-                mAdapter.setMovieList(it)
-            }
-            else{
-                findViewById<TextView>(R.id.show).visibility = View.VISIBLE
-            }
-        })
-        if(apiCalled==false) {
-            mViewModel.makeApiCall()
-            apiCalled = true
-        }
 
+//        val recyclerView =findViewById<RecyclerView>(R.id.recyclerView)
+//        val layoutManager = GridLayoutManager(this,2)
+//        recyclerView.layoutManager = layoutManager
+//        mAdapter = MovieListAdapter(this,mMovieList)
+//        recyclerView.adapter = mAdapter
+//
+//        mViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
+//        mViewModel.getMovieListObserver().observe(this, Observer {
+//            if(it!=null) {
+//                mMovieList = it
+//                mAdapter.setMovieList(it)
+//            }
+//            else{
+//                Log.d("INSIDE","here")
+//                findViewById<TextView>(R.id.show).visibility = View.VISIBLE
+//            }
+//        })
+//
+//        mViewModel.makeApiCall()
 
     }
 }
