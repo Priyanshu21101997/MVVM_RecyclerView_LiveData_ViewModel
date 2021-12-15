@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.mvvm_recyclerview_livedata_viewmodel.adapter.MovieListAdapter
 import com.example.mvvm_recyclerview_livedata_viewmodel.adapter.newActivityAdapter
 import com.example.mvvm_recyclerview_livedata_viewmodel.database.SocialAppUser
 import com.example.mvvm_recyclerview_livedata_viewmodel.viewmodel.MovieViewModel
@@ -42,45 +43,45 @@ class SingleItemFragment : Fragment() {
 
 
         val recyclerView =view.findViewById<RecyclerView>(R.id.recyclerView2)
+        val bundle = this.arguments
 
-        mAdapter = newActivityAdapter(mMovieList)
+
+        if (bundle != null) {
+            mAdapter = newActivityAdapter(Integer.parseInt(bundle.get("ID").toString()),mMovieList)
+        }
         recyclerView.adapter = mAdapter
         val layoutManager = LinearLayoutManager(view.context)
         recyclerView.layoutManager = layoutManager
-        (recyclerView.layoutManager as LinearLayoutManager).stackFromEnd = true
 
 
         val imageView = view.findViewById<ImageView>(R.id.imageView2)
-//        val textView = findViewById<TextView>(R.id.textView2)
         val likeButton = view.findViewById<Button>(R.id.increaseLikeButton)
         val editText = view.findViewById<EditText>(R.id.editTextComment)
         val postComment = view.findViewById<Button>(R.id.postComment)
-        val bundle = this.arguments
 
 
         if (bundle != null) {
             Glide
                 .with(this)
                 .load(bundle.get("IMAGE").toString())
-                .fitCenter()
-                .apply(RequestOptions().override(1600, 1550))
+                .apply(RequestOptions().override(1100, 900))
+                .centerCrop()
                 .into(imageView)
         }
 
         likeButton.setOnClickListener {
-//            Log.d("NEWCOMMENT","${intent.getIntExtra("ID", 0)}")
             if (bundle != null) {
                 mViewModel.updateLikesCount(Integer.parseInt(bundle.get("ID").toString()))
             }
         }
 
         postComment.setOnClickListener {
-            val listType =object : TypeToken<List<String>>(){}.type
-            val comment = Gson().fromJson<MutableList<String>>(bundle?.get("COMMENTS").toString(),listType)
+            val postId = Integer.parseInt(bundle?.get("ID").toString())
+            val comment = mViewModel.getMovieListObserver().value?.get(postId-1)?.comments as MutableList<String>
             comment.add(editText.text.toString())
             Log.d("NEWCOMMENT","$comment")
             if (bundle != null) {
-                mViewModel.updateComment(Integer.parseInt(bundle.get("ID").toString()),comment)
+                mViewModel.updateComment(postId,comment)
             }
             Toast.makeText(it.context,"Comment added successfully !!!",Toast.LENGTH_LONG).show()
             editText.text.clear()
@@ -97,6 +98,7 @@ class SingleItemFragment : Fragment() {
 
         return view
     }
+
 
 
 }

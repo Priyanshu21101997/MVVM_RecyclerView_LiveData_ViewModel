@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mvvm_recyclerview_livedata_viewmodel.R
 import com.example.mvvm_recyclerview_livedata_viewmodel.database.SocialAppUser
 
-class newActivityAdapter(_movieList:List<SocialAppUser>): RecyclerView.Adapter<newActivityAdapter.ViewHolder>() {
+class newActivityAdapter(_postId:Int,_movieList:List<SocialAppUser>): RecyclerView.Adapter<newActivityAdapter.ViewHolder>() {
 
     private var movieList: List<SocialAppUser>? = _movieList
-
+    private var postId = _postId
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val commentsSection = itemView.findViewById<TextView>(R.id.commentTextView)
 
@@ -23,18 +23,23 @@ class newActivityAdapter(_movieList:List<SocialAppUser>): RecyclerView.Adapter<n
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(movieList?.get(position)?.comments?.size!! > 0)
-            holder.commentsSection.text = movieList?.get(position)?.comments?.get(0)
-        else
-            holder.commentsSection.text = "No Comments Found"
+        if(movieList!!.isNotEmpty())
+            holder.commentsSection.text = movieList?.get(postId-1)?.comments?.get(position)
+
     }
 
     override fun getItemCount(): Int {
-        return movieList!!.size
+        if(movieList!!.isNotEmpty())
+            return movieList?.get(postId-1)?.comments!!.size
+        return 0
+
     }
 
     fun setMovieList(movieList: List<SocialAppUser>) {
         this.movieList = movieList
+        notifyDataSetChanged()
     }
+
+
 
 }

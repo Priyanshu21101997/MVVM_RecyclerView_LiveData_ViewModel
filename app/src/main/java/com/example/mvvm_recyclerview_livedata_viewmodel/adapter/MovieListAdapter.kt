@@ -23,10 +23,11 @@ import android.os.Bundle
 
 
 
-class MovieListAdapter(_context: Context,_movieList:List<SocialAppUser>):RecyclerView.Adapter<MovieListAdapter.viewHolder>() {
+class MovieListAdapter(_context: Context,_movieList:List<SocialAppUser>,_onItemCLick:onItemCLick):RecyclerView.Adapter<MovieListAdapter.viewHolder>() {
 
     private var movieList: List<SocialAppUser>? = _movieList
     var context = _context
+    var onItemCLickRef = _onItemCLick
 
 
     class viewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -54,32 +55,8 @@ class MovieListAdapter(_context: Context,_movieList:List<SocialAppUser>):Recycle
             .apply(RequestOptions().override(600, 550))
             .into(holder.imageView)
 
-        // Click Event
-
-        val tempObj = movieList?.get(position)
-
         holder.imageView.setOnClickListener{
-//            val intent = Intent(context,New_Activity::class.java)
-//            if (tempObj != null) {
-//                intent.putExtra("IMAGE", tempObj.imageUrl)
-//                intent.putExtra("COMMENTS", Gson().toJson(tempObj.comments))
-//                intent.putExtra("ID",tempObj.db_id)
-//
-//                Log.d("OBJECT","${tempObj.db_id}")
-//                intent.flags=Intent.FLAG_ACTIVITY_NEW_TASK
-//                context.startActivity(intent)
-//            }
-            val activity = it.getContext() as AppCompatActivity
-            val bundle = Bundle()
-            bundle.putString("IMAGE", tempObj!!.imageUrl)
-            bundle.putString("COMMENTS", Gson().toJson(tempObj.comments))
-            bundle.putInt("ID",tempObj.db_id)
-
-            val singleItemFragment = SingleItemFragment()
-            singleItemFragment.arguments = bundle
-
-            activity.supportFragmentManager.beginTransaction().replace(R.id.layout,singleItemFragment).addToBackStack(null).commit()
-
+            onItemCLickRef.passData(movieList?.get(position))
         }
 
     }
@@ -91,6 +68,10 @@ class MovieListAdapter(_context: Context,_movieList:List<SocialAppUser>):Recycle
     fun setMovieList(movieList: List<SocialAppUser>) {
         this.movieList = movieList
         notifyDataSetChanged()
+    }
+
+    interface onItemCLick{
+        fun passData(socialAppUser: SocialAppUser?)
     }
 
 

@@ -20,33 +20,31 @@ class MovieViewModel(application: Application) : AndroidViewModel(application){
     val readAllData : LiveData<List<SocialAppUser>>
     private val repository : SocialAppRepository
 
+
     init{
         val socialAppDao = SocialAppDatabase.getDatabase(application).userDao()
         repository = SocialAppRepository(socialAppDao)
         readAllData = repository.readAllData
     }
 
-//    private val movieList:MutableLiveData<List<MovieModel>> = MutableLiveData()
-//        private val movieList =
-
 
     fun makeApiCall() {
+        Log.d("HERE","API CALL !!")
         val apiService = RetroInstance.getRetroClient()?.create(APIService::class.java)
-        val call: Call<List<MovieModel>> = apiService!!.getMovieList("vIF1Szg9Z0wV4sV20bAgw_1Mxuunm2H9i4nLq8IsJwg")
+            val call: Call<List<MovieModel>> =
+                apiService!!.getMovieList("vIF1Szg9Z0wV4sV20bAgw_1Mxuunm2H9i4nLq8IsJwg")
 
             call.enqueue(object : Callback<List<MovieModel>> {
                 override fun onResponse(
                     call: Call<List<MovieModel>>,
                     response: Response<List<MovieModel>>
                 ) {
-//                    Log.d("Dummy","${response.body()}")
-                    val finalList = mutableListOf<SocialAppUser>()
                     val responses = response.body()
                     val comments = mutableListOf<String>()
-                    // Remove this
                     if (responses != null) {
-                        for(singleResponse in responses){
-                            val newUser = SocialAppUser(0,singleResponse.urls?.thumb,0,
+                        for (singleResponse in responses) {
+                            val newUser = SocialAppUser(
+                                0, singleResponse.urls?.thumb, 0,
                                 comments
                             )
                             viewModelScope.launch(Dispatchers.IO) {
@@ -55,12 +53,10 @@ class MovieViewModel(application: Application) : AndroidViewModel(application){
 
                         }
                     }
-//                    movieList.postValue(finalList)
                 }
 
                 override fun onFailure(call: Call<List<MovieModel>>, t: Throwable) {
-                    Log.d("Dummy","${t.message}")
-//                    movieList.postValue(mutableListOf<SocialAppUser>())
+                    Log.d("Dummy", "${t.message}")
                 }
             })
     }
