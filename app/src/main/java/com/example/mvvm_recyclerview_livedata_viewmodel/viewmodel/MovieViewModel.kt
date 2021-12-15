@@ -20,7 +20,6 @@ class MovieViewModel(application: Application) : AndroidViewModel(application){
     val readAllData : LiveData<List<SocialAppUser>>
     private val repository : SocialAppRepository
 
-
     init{
         val socialAppDao = SocialAppDatabase.getDatabase(application).userDao()
         repository = SocialAppRepository(socialAppDao)

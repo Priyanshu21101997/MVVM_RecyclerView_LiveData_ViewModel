@@ -20,4 +20,4 @@ class SocialAppRepository(val socialAppDao:SocialAppDao) {
         socialAppDao.updateComment(id,comment)
     }
 
-}
+    }

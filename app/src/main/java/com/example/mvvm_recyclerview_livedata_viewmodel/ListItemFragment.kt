@@ -56,8 +56,6 @@ class ListItemFragment : Fragment(),MovieListAdapter.onItemCLick {
             }
         })
 
-
-
         return view
     }
 
@@ -66,7 +64,6 @@ class ListItemFragment : Fragment(),MovieListAdapter.onItemCLick {
         val bundle = Bundle()
         bundle.putString("IMAGE", tempObj!!.imageUrl)
         bundle.putInt("ID",tempObj.db_id)
-        Toast.makeText(activity,"ID is ${tempObj.db_id}",Toast.LENGTH_LONG).show()
 
         val singleItemFragment = SingleItemFragment()
         singleItemFragment.arguments = bundle
