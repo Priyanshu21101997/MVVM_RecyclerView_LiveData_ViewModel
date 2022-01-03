@@ -12,10 +12,10 @@ import java.lang.reflect.Type
 
 @Entity(tableName = "user_data")
 
-data class SocialAppUser(@PrimaryKey(autoGenerate = true) val db_id:Int,@SerializedName("urls") val imageUrl:String?, val likes:Int,@TypeConverters(GithubTypeConvertor::class)
-val comments:List<String>?) {
-
-
+data class SocialAppUser(@PrimaryKey(autoGenerate = true) val db_id:Int,@SerializedName("urls") val imageUrl:String?, val likes:Int,@TypeConverters(GithubTypeConvertor::class
+)
+val comments:List<String>?,
+val isActive:Int) {
 
 }
 

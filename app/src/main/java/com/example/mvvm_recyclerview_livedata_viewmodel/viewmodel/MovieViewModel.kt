@@ -27,6 +27,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application){
     }
 
 
+
     fun makeApiCall() {
         Log.d("HERE","API CALL !!")
         val apiService = RetroInstance.getRetroClient()?.create(APIService::class.java)
@@ -44,7 +45,7 @@ class MovieViewModel(application: Application) : AndroidViewModel(application){
                         for (singleResponse in responses) {
                             val newUser = SocialAppUser(
                                 0, singleResponse.urls?.thumb, 0,
-                                comments
+                                comments,1
                             )
                             viewModelScope.launch(Dispatchers.IO) {
                                 repository.addUser(newUser)
