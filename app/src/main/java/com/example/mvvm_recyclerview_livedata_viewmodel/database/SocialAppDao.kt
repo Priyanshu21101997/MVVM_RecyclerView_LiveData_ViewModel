@@ -15,6 +15,7 @@ interface SocialAppDao {
     @Query("SELECT * from user_data")
     fun readAllData(): LiveData<List<SocialAppUser>>
 
+
     @Query("UPDATE user_data SET likes = likes+1  WHERE db_id = :id")
     fun updateLikeCount(id:Int)
 
